@@ -11,8 +11,7 @@
 
 - 프로젝트 세팅
 
-1. .env에 아래 내용 추가
-   DATABASE_URL="postgresql://postgres:1033@localhost:5432/mustit?schema=public"
+1. .env 세팅 (repo wiki 참조)
 2. npm install
 3. npm run dev
 4. npx prisma generate
@@ -21,7 +20,6 @@
 
 ## prod 모드로 실행방법 (docker-compose 사용)
 
-1. .env 수정
-   DATABASE_URL="postgresql://postgres:1033@mustit-blog-db:5432/mustit?schema=public"
+1. .env 세팅 (repo wiki 참조)
 2. docker compose up
 # blog-server
