@@ -1,44 +1,44 @@
 version: '3.9'
 services:
-  mustit-blog-db:
+  blog-db:
     image: postgres:16
     restart: always
     environment:
       - POSTGRES_DB=mustit
       - POSTGRES_PASSWORD=1033
       - POSTGRES_USER=postgres
-    container_name: mustit-blog-db
+    container_name: blog-db
     ports:
       - '5432:5432'
     volumes:
       - ./prisma:/prisma
     networks:
-      - mustit-blog-network
+      - blog-network
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
 
-  mustit-blog-app:
+  blog-server:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mustit-blog-app
+    container_name: blog-server
     ports:
       - '80:9900'
     environment:
-      - POSTGRES_HOST=mustit-blog-db
+      - POSTGRES_HOST=blog-db
     depends_on:
-      mustit-blog-db:
+      blog-db:
         condition: service_healthy
     volumes:
       - ./prisma:/app/prisma
     networks:
-      - mustit-blog-network
+      - blog-network
     command: /bin/sh -c "sleep 10 && npx prisma migrate deploy && npm run start:prod"
     restart: on-failure
 
 networks:
-  mustit-blog-network:
+  blog-network:
     driver: bridge
