@@ -258,6 +258,26 @@ export class ArticleService {
     };
   }
 
+  async getComments(id: number): Promise<IResponse<Comment[]>> {
+    const comments = await this.prisma.comment.findMany({
+      where: {
+        articleId: id,
+      },
+      include: {
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
+    });
+    return {
+      status: 200,
+      message: '댓글 조회 성공',
+      data: comments,
+    };
+  }
+
   async commentArticle(id: number, content: string, user: any, parentId?: number): Promise<IResponse<Comment[]>> {
     const article = await this.prisma.article.findUnique({
       where: {
@@ -278,6 +298,13 @@ export class ArticleService {
     const allComments = await this.prisma.comment.findMany({
       where: {
         articleId: id,
+      },
+      include: {
+        author: {
+          select: {
+            username: true,
+          },
+        },
       },
     });
     return {

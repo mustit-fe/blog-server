@@ -75,6 +75,12 @@ export class ArticleController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('/:id/comments')
+  async comments(@Param('id') id: string): Promise<IResponse<Comment[]>> {
+    return await this.articleService.getComments(parseInt(id));
+  }
+
+  @UseGuards(AuthGuard)
   @Post('/:id/comment')
   async comment(
     @Request() req: Request & { user: any },
