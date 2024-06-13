@@ -268,7 +268,11 @@ export class ArticleService {
           select: {
             username: true,
           },
+          
         },
+      },
+      orderBy: {
+        createdAt: 'asc' // or 'desc' for descending order
       },
     });
     return {
@@ -300,16 +304,60 @@ export class ArticleService {
         articleId: id,
       },
       include: {
+      author: {
+        select: {
+          username: true,
+        },
+      }},
+      orderBy: {
+        createdAt: 'asc' // or 'desc' for descending order
+      },
+    });
+    return {
+      status: 200,
+      message: '댓글 작성 성공',
+      data: allComments,
+    };
+  }
+
+  async modifyComment(id: number, commentId: number, content: string, user: any): Promise<IResponse<Comment[]>> {
+    const comment = await this.prisma.comment.findUnique({
+      where: {
+        id: commentId,
+      },
+    });
+    if (!comment) {
+      throw new BadRequestException('댓글이 존재하지 않습니다');
+    }
+    if (comment.authorId !== user.id) {
+      throw new BadRequestException('작성자만 수정할 수 있습니다');
+    }
+    await this.prisma.comment.update({
+      where: {
+        id: commentId,
+      },
+      data: {
+        content,
+      },
+    });
+    const allComments = await this.prisma.comment.findMany({
+      where: {
+        articleId: id,
+      },
+      include: {
         author: {
           select: {
             username: true,
           },
         },
       },
+      orderBy: {
+        createdAt: 'asc' // or 'desc' for descending order
+      },
     });
     return {
       status: 200,
-      message: '댓글 작성 성공',
+      message: '댓글 수정 성공',
       data: allComments,
     };
   }
@@ -334,6 +382,16 @@ export class ArticleService {
     const allComments = await this.prisma.comment.findMany({
       where: {
         articleId: id,
+      },
+      include: {
+        author: {
+          select: {
+            username: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc' // or 'desc' for descending order
       },
     });
     return {

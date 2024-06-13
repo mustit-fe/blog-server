@@ -82,7 +82,7 @@ export class ArticleController {
 
   @UseGuards(AuthGuard)
   @Post('/:id/comment')
-  async comment(
+  async createComment(
     @Request() req: Request & { user: any },
     @Param('id') id: string,
     @Body() body: CreateCommentDto
@@ -90,6 +90,17 @@ export class ArticleController {
     return await this.articleService.commentArticle(parseInt(id), body.content, req.user, body.parentId);
   }
 
+  @UseGuards(AuthGuard)
+  @Put('/:id/comment/:commentId')
+  async modifyComment(
+    @Request() req: Request & { user: any },
+    @Param('commentId') commentId: string,
+    @Param('id') id: string,
+    @Body() body: {content: string}
+  ): Promise<IResponse<Comment[]>> {
+    return await this.articleService.modifyComment(parseInt(id), parseInt(commentId), body.content, req.user);
+  }
+  
   @UseGuards(AuthGuard)
   @Delete('/:id/comment/:commentId')
   async deleteComment(
