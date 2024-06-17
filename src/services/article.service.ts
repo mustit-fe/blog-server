@@ -182,13 +182,14 @@ export class ArticleService {
   }
 
   async articleLikeinfo(id: number, user: any): Promise<{ likes: number, isLiked: boolean }> {
+    const userId = user? user.id : null;
     const likeInfo = await this.prisma.$queryRaw`
       SELECT COUNT(*) AS likes
            , EXISTS(
                  SELECT 1 
                    FROM "Likes" 
                   WHERE "articleId" = ${id} 
-                    AND "userId" = ${user.id}) AS isLiked
+                    AND "userId" = ${userId}) AS isLiked
         FROM "Likes" 
        WHERE "articleId" = ${id}`;
     return { likes: Number(likeInfo[0].likes), isLiked: likeInfo[0].isliked };
